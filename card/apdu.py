@@ -1,0 +1,35 @@
+# Get UID
+GET_UID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
+
+# Load Authentication Key into reader slot
+# FF 82 00 00 06 [6 byte key]
+LOAD_KEY = [0xFF, 0x82, 0x00, 0x00, 0x06]
+
+# General Authenticate
+# FF 86 00 00 05 01 00 [block] [key_type] [slot]
+AUTHENTICATE = [0xFF, 0x86, 0x00, 0x00, 0x05, 0x01, 0x00]
+
+# Read Binary: reads 16 bytes from block
+# FF B0 00 [block] 10
+READ_BLOCK = [0xFF, 0xB0, 0x00]
+
+# Write Binary: writes 16 bytes to block
+# FF D6 00 [block] 10 [16 bytes]
+WRITE_BLOCK = [0xFF, 0xD6, 0x00]
+
+# Key types
+KEY_A = 0x60
+KEY_B = 0x61
+
+# Key slot
+SLOT_0 = 0x00
+
+# Default factory key
+DEFAULT_KEY = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
+
+# Status codes
+SW_SUCCESS = (0x90, 0x00)
+SW_AUTH_FAILED = (0x63, 0x00)
+SW_NOT_AUTHENTICATED = (0x69, 0x83)
+SW_CONDITIONS_NOT_SATISFIED = (0x69, 0x82)
+SW_INVALID_BLOCK = (0x6A, 0x82)
