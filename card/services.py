@@ -59,7 +59,45 @@ class CardService:
         self._check_sw(sw1, sw2, f"Authentication failed for block {block}")
     
     def read_block(self, block: int) -> list:
-        pass
+        apdu = READ_BLOCK + [block, 0x10]
+        data, sw1, sw2 = self._transmit(apdu)
+        self._check_sw(sw1, sw2, f"Failed to read block {block}")
+        return data
     
     def write_block(self, block: int, data: list):
-        pass
+        if len(data) != 16:
+            raise CardException("Data must be exactly 16 bytes")
+        
+        apdu = WRITE_BLOCK + [block, 0x10] + data
+        _, sw1, sw2 = self._transmit(apdu)
+        self._check_sw(sw1, sw2, f"Failed to write to block {block}")
+
+    def dump_card(self, sector_keys: dict = None) -> dict:
+        dump = {}
+        for sector in range(16):
+            self.reconnect()
+            key = sector_keys.get(sector, DEFAULT_KEY) if sector_keys else DEFAULT_KEY
+            first_block = sector * 4
+            try:
+                self.load_key(key)
+                self.authenticate(first_block)
+                blocks = {}
+                for block in range(4):
+                    block_number = first_block + block
+                    data = self.read_block(block_number)
+                    blocks[block] = {
+                        'data': data,
+                        'hex': ' '.join(f'{b:02X}' for b in data),
+                        'is_trailer': block == 3
+                    }
+                dump[sector] = {
+                    'status': 'ok',
+                    'blocks': blocks
+                }
+            except CardException as e:
+                dump[sector] = {
+                    'status': 'error',
+                    'error': str(e),
+                    'blocks': {}
+                }
+        return dump 
