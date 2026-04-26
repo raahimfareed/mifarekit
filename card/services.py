@@ -38,15 +38,25 @@ class CardService:
         self.connection.connect()
     
     def _transmit(self, apdu: list) -> tuple[list, int, int]:
-        pass
+        if not self.connection:
+            raise CardException("Not connected to reader")
+        result = self.connection.transmit(apdu)
+        if result is None:
+            raise CardException("No card on reader or card removed")
+        return result
     
     def _check_sw(self, sw1: int, sw2: int, error_msg: str):
         if (sw1, sw2) != SW_SUCCESS:
             raise CardException(f"{error_msg}: {sw1:02X} {sw2:02X}")
     
-    def get_uid(self):
-        data, sw1, sw2 = self._transmit(GET_UID)
-        self._check_sw(sw1, sw2, "Failed to get UID")
+    def get_uid(self) -> str | None:
+        try:
+            data, sw1, sw2 = self._transmit(GET_UID)
+            if (sw1, sw2) != SW_SUCCESS:
+                return None
+            return ''.join(f'{b:02X}' for b in data)
+        except Exception:
+            return None
     
     def load_key(self, key: list = DEFAULT_KEY):
         apdu = LOAD_KEY + key
