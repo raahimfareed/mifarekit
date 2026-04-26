@@ -1,0 +1,71 @@
+{% extends 'card/base.html' %}
+
+{% block title %}Change Key - MifareKit{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white">Change Key</h1>
+    <p class="text-gray-400 text-sm mt-1">Change Key A for a sector</p>
+</div>
+
+<div id="result" class="mb-6"></div>
+
+<div class="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-lg">
+    <form hx-post="{% url 'change_key_action' %}"
+          hx-target="#result"
+          hx-swap="innerHTML"
+          class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Sector</label>
+            <select name="sector" class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                {% for i in "0123456789" %}
+                <option value="{{ i }}">Sector {{ i }}</option>
+                {% endfor %}
+                <option value="10">Sector 10</option>
+                <option value="11">Sector 11</option>
+                <option value="12">Sector 12</option>
+                <option value="13">Sector 13</option>
+                <option value="14">Sector 14</option>
+                <option value="15">Sector 15</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Current Key A</label>
+            <input type="text" name="current_key" value="FFFFFFFFFFFF" maxlength="12"
+                class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="FFFFFFFFFFFF">
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">New Key A</label>
+            <input type="text" name="new_key" maxlength="12" required
+                class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="FFFEFDFCFBFA">
+        </div>
+
+        {% if known_keys %}
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Or pick from saved keys</label>
+            <select onchange="document.querySelector('[name=new_key]').value = this.value"
+                class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                <option value="">Select a saved key</option>
+                {% for key in known_keys %}
+                <option value="{{ key.key }}">{{ key.name }} -- {{ key.key }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="bg-yellow-950 border border-yellow-900 text-yellow-300 px-3 py-2 rounded-lg text-xs">
+            Warning: writing wrong access bits will permanently brick the sector.
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition">
+            Change Key
+        </button>
+    </form>
+</div>
+{% endblock %}

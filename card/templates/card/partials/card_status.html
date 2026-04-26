@@ -1,0 +1,14 @@
+{% if uid %}
+<div hx-get="{% url 'card_status' %}"
+     hx-trigger="every 2s"
+     hx-swap="outerHTML">
+    <p class="font-mono text-green-400 text-lg tracking-widest">{{ uid }}</p>
+    <p class="text-gray-500 text-xs mt-2">Card detected</p>
+</div>
+{% else %}
+<div hx-get="{% url 'card_status' %}"
+     hx-trigger="every 2s"
+     hx-swap="outerHTML">
+    <p class="text-gray-500 text-sm">No card detected</p>
+</div>
+{% endif %}

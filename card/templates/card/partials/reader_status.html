@@ -1,0 +1,19 @@
+<div hx-get="{% url 'reader_status' %}"
+     hx-trigger="every 2s"
+     hx-swap="outerHTML">
+    {% if readers %}
+        <ul class="space-y-2">
+            {% for reader in readers %}
+            <li class="flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                <span class="text-gray-200">{{ reader }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="flex items-center gap-2 text-sm">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-gray-400">No readers found</span>
+        </div>
+    {% endif %}
+</div>

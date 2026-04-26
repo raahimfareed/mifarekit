@@ -1,0 +1,72 @@
+{% extends 'card/base.html' %}
+
+{% block title %}Write Block - MifareKit{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white">Write Block</h1>
+    <p class="text-gray-400 text-sm mt-1">Write 16 bytes to a specific block</p>
+</div>
+
+{% if error %}
+<div class="bg-red-950 border border-red-800 text-red-300 px-4 py-3 rounded-lg mb-6 text-sm">
+    {{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="bg-green-950 border border-green-800 text-green-300 px-4 py-3 rounded-lg mb-6 text-sm">
+    Block written successfully
+</div>
+{% endif %}
+
+<div class="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-lg">
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Sector</label>
+            <select name="sector" class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                {% for i in "0123456789" %}
+                <option value="{{ i }}">Sector {{ i }}</option>
+                {% endfor %}
+                <option value="10">Sector 10</option>
+                <option value="11">Sector 11</option>
+                <option value="12">Sector 12</option>
+                <option value="13">Sector 13</option>
+                <option value="14">Sector 14</option>
+                <option value="15">Sector 15</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Block</label>
+            <select name="block" class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                <option value="0">Block 0</option>
+                <option value="1">Block 1</option>
+                <option value="2">Block 2</option>
+                <option value="3">Block 3 (trailer)</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Key (hex, 12 chars)</label>
+            <input type="text" name="key" value="FFFFFFFFFFFF" maxlength="12"
+                class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="FFFFFFFFFFFF">
+        </div>
+
+        <div>
+            <label class="block text-xs text-gray-400 uppercase tracking-wider mb-1.5">Data (hex, 32 chars = 16 bytes)</label>
+            <input type="text" name="data" maxlength="32"
+                class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm font-mono rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+                placeholder="00000000000000000000000000000000">
+            <p class="text-gray-600 text-xs mt-1">32 hex characters, no spaces</p>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition">
+            Write Block
+        </button>
+    </form>
+</div>
+{% endblock %}

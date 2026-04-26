@@ -1,0 +1,27 @@
+<div id="logs-list" class="space-y-2">
+    {% for log in logs %}
+    <div class="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg px-4 py-3">
+        <div class="flex items-center gap-4">
+            <span class="{% if log.status == 'success' %}text-green-400{% else %}text-red-400{% endif %} w-2 h-2 rounded-full bg-current"></span>
+            <div>
+                <p class="text-sm text-gray-200">{{ log.get_operation_display }}</p>
+                {% if log.sector is not None %}
+                <p class="text-xs text-gray-500 mt-0.5">Sector {{ log.sector }}{% if log.block is not None %} / Block {{ log.block }}{% endif %}</p>
+                {% endif %}
+                {% if log.data %}
+                <p class="font-mono text-xs text-green-400 mt-0.5">{{ log.data }}</p>
+                {% endif %}
+                {% if log.error %}
+                <p class="text-xs text-red-400 mt-0.5">{{ log.error }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-xs text-gray-500">{{ log.created_at|date:"H:i:s" }}</p>
+            <p class="text-xs text-gray-600">{{ log.created_at|date:"d M Y" }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-500 text-sm">No operations logged</p>
+    {% endfor %}
+</div>
